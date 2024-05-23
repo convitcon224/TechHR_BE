@@ -7,6 +7,7 @@ import com.usth.techhr.techhr.exception.UniqueConstraintViolatedException;
 import com.usth.techhr.techhr.model.Employee;
 import com.usth.techhr.techhr.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -20,12 +21,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     private MajorService majorService;
     private DepartmentService departmentService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, MajorService majorService, DepartmentService departmentService) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, MajorService majorService, DepartmentService departmentService, PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
         this.majorService = majorService;
         this.departmentService = departmentService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -45,9 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDTO addEmployee(EmployeeDTO employeeDTO) {
-        employeeDTO.setPassword(Hashing.sha256()
-                .hashString(employeeDTO.getPassword(), StandardCharsets.UTF_8)
-                .toString());
+        employeeDTO.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
 
         Employee employee = this.parseToEntity(employeeDTO);
         try {
