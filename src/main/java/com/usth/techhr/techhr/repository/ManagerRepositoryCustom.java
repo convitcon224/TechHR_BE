@@ -1,10 +1,10 @@
-package com.usth.techhr.techhr.service;
+package com.usth.techhr.techhr.repository;
 
 import com.usth.techhr.techhr.dto.UserDTO;
 
 import java.util.Optional;
 
-public interface AuthService {
+public interface ManagerRepositoryCustom {
     Optional<UserDTO> findByUsername(String username);
     Boolean existsByPhone(String phoneNumber);
     Boolean existsByPhoneExceptOne(String phoneNumber, String role, long id);

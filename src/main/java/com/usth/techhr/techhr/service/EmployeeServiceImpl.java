@@ -5,6 +5,7 @@ import com.usth.techhr.techhr.exception.ObjectNotFoundException;
 import com.usth.techhr.techhr.exception.UniqueConstraintViolatedException;
 import com.usth.techhr.techhr.model.Employee;
 import com.usth.techhr.techhr.repository.EmployeeRepository;
+import com.usth.techhr.techhr.repository.ManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,15 +21,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private MajorService majorService;
     private DepartmentService departmentService;
     private PasswordEncoder passwordEncoder;
-    private AuthService authService;
+    private ManagerRepository managerRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, MajorService majorService, DepartmentService departmentService, PasswordEncoder passwordEncoder, AuthService authService) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, MajorService majorService, DepartmentService departmentService, PasswordEncoder passwordEncoder, ManagerRepository managerRepository) {
         this.employeeRepository = employeeRepository;
         this.majorService = majorService;
         this.departmentService = departmentService;
         this.passwordEncoder = passwordEncoder;
-        this.authService = authService;
+        this.managerRepository = managerRepository;
     }
 
     @Override
@@ -139,19 +140,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private void validateEmailAndPhone(EmployeeDTO employeeDTO) {
-        if (this.authService.existsByPhone(employeeDTO.getPhone())) {
+        if (this.managerRepository.existsByPhone(employeeDTO.getPhone())) {
             throw new UniqueConstraintViolatedException("Phone number already exists");
         }
-        if (this.authService.existsByEmail(employeeDTO.getEmail())) {
+        if (this.managerRepository.existsByEmail(employeeDTO.getEmail())) {
             throw new UniqueConstraintViolatedException("Email already exists");
         }
     }
 
     private void validateUpdateEmailAndPhone(long id, EmployeeDTO employeeDTO) {
-        if (this.authService.existsByPhoneExceptOne(employeeDTO.getPhone(), "USER", id)) {
+        if (this.managerRepository.existsByPhoneExceptOne(employeeDTO.getPhone(), "USER", id)) {
             throw new UniqueConstraintViolatedException("Phone number already exists");
         }
-        if (this.authService.existsByEmailExceptOne(employeeDTO.getEmail(), "USER", id)) {
+        if (this.managerRepository.existsByEmailExceptOne(employeeDTO.getEmail(), "USER", id)) {
             throw new UniqueConstraintViolatedException("Email already exists");
         }
     }

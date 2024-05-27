@@ -3,7 +3,6 @@ package com.usth.techhr.techhr.controller;
 import com.usth.techhr.techhr.dto.AuthResponseDTO;
 import com.usth.techhr.techhr.dto.EmployeeDTO;
 import com.usth.techhr.techhr.dto.LoginDTO;
-import com.usth.techhr.techhr.service.AuthService;
 import com.usth.techhr.techhr.service.EmployeeService;
 import com.usth.techhr.techhr.service.LoginService;
 import jakarta.validation.Valid;

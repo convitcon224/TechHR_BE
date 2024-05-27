@@ -1,30 +1,17 @@
-package com.usth.techhr.techhr.service;
+package com.usth.techhr.techhr.repository;
 
-import com.usth.techhr.techhr.common.DataUtil;
-import com.usth.techhr.techhr.dto.AuthResponseDTO;
-import com.usth.techhr.techhr.dto.LoginDTO;
 import com.usth.techhr.techhr.dto.UserDTO;
-import com.usth.techhr.techhr.model.Employee;
-import com.usth.techhr.techhr.security.JwtTokenGenerator;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
-public class AuthServiceImpl implements AuthService {
-
+@Repository
+public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
 

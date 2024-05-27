@@ -1,6 +1,6 @@
 package com.usth.techhr.techhr.controller;
 
-import com.usth.techhr.techhr.service.AuthService;
+import com.usth.techhr.techhr.repository.ManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @Autowired
-    private AuthService authService;
+    private ManagerRepository managerRepository;
 
     @GetMapping(path = "/test")
     public String test() {
-        return authService.existsByPhoneExceptOne("01923749", "USER", 1).toString();
+        return managerRepository.existsByPhoneExceptOne("01923749", "USER", 1).toString();
     }
 
     @GetMapping(path = "/test2")
     public String test2() {
-        return authService.existsByEmailExceptOne("dung@gmail.com","USER", 781).toString();
+        return managerRepository.existsByEmailExceptOne("dung@gmail.com","USER", 781).toString();
     }
 }
