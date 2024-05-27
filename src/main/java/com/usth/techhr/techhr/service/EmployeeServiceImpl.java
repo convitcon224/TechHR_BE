@@ -1,6 +1,5 @@
 package com.usth.techhr.techhr.service;
 
-import com.google.common.hash.Hashing;
 import com.usth.techhr.techhr.dto.EmployeeDTO;
 import com.usth.techhr.techhr.exception.ObjectNotFoundException;
 import com.usth.techhr.techhr.exception.UniqueConstraintViolatedException;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,13 +20,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private MajorService majorService;
     private DepartmentService departmentService;
     private PasswordEncoder passwordEncoder;
+    private AuthService authService;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, MajorService majorService, DepartmentService departmentService, PasswordEncoder passwordEncoder) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, MajorService majorService, DepartmentService departmentService, PasswordEncoder passwordEncoder, AuthService authService) {
         this.employeeRepository = employeeRepository;
         this.majorService = majorService;
         this.departmentService = departmentService;
         this.passwordEncoder = passwordEncoder;
+        this.authService = authService;
     }
 
     @Override
@@ -46,22 +46,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         return this.parseToDTO(employee);
     }
 
+//    @Override
+//    public EmployeeDTO addEmployee(EmployeeDTO employeeDTO) {
+//        employeeDTO.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
+//
+//        Employee employee = this.parseToEntity(employeeDTO);
+//        try {
+//            return this.parseToDTO(employeeRepository.save(employee));
+//        } catch (Exception e) {
+//            if (e.getMessage().contains("EMPLOYEE_UNIQUE_PHONE")){
+//                throw new UniqueConstraintViolatedException("Unique constraint (EMPLOYEE_UNIQUE_PHONE) violated");
+//            } else if (e.getMessage().contains("EMPLOYEE_UNIQUE_EMAIL")) {
+//                throw new UniqueConstraintViolatedException("Unique constraint (EMPLOYEE_UNIQUE_EMAIL) violated");
+//            } else {
+//                throw new RuntimeException(e.getMessage());
+//            }
+//        }
+//    }
+
     @Override
     public EmployeeDTO addEmployee(EmployeeDTO employeeDTO) {
-        employeeDTO.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
+        this.validateEmailAndPhone(employeeDTO);
 
+        employeeDTO.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
         Employee employee = this.parseToEntity(employeeDTO);
-        try {
-            return this.parseToDTO(employeeRepository.save(employee));
-        } catch (Exception e) {
-            if (e.getMessage().contains("EMPLOYEE_UNIQUE_PHONE")){
-                throw new UniqueConstraintViolatedException("Unique constraint (EMPLOYEE_UNIQUE_PHONE) violated");
-            } else if (e.getMessage().contains("EMPLOYEE_UNIQUE_EMAIL")) {
-                throw new UniqueConstraintViolatedException("Unique constraint (EMPLOYEE_UNIQUE_EMAIL) violated");
-            } else {
-                throw new RuntimeException(e.getMessage());
-            }
-        }
+        return this.parseToDTO(this.employeeRepository.save(employee));
     }
 
     @Override
@@ -71,6 +80,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDTO updateEmployee(long id, EmployeeDTO employeeDTO) {
+        this.validateUpdateEmailAndPhone(id, employeeDTO);
+
         Employee employeeUpdate = this.getEmployeeById(id);
         employeeUpdate.setName(employeeDTO.getName());
         employeeUpdate.setEmail(employeeDTO.getEmail());
@@ -127,4 +138,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    private void validateEmailAndPhone(EmployeeDTO employeeDTO) {
+        if (this.authService.existsByPhone(employeeDTO.getPhone())) {
+            throw new UniqueConstraintViolatedException("Phone number already exists");
+        }
+        if (this.authService.existsByEmail(employeeDTO.getEmail())) {
+            throw new UniqueConstraintViolatedException("Email already exists");
+        }
+    }
+
+    private void validateUpdateEmailAndPhone(long id, EmployeeDTO employeeDTO) {
+        if (this.authService.existsByPhoneExceptOne(employeeDTO.getPhone(), "USER", id)) {
+            throw new UniqueConstraintViolatedException("Phone number already exists");
+        }
+        if (this.authService.existsByEmailExceptOne(employeeDTO.getEmail(), "USER", id)) {
+            throw new UniqueConstraintViolatedException("Email already exists");
+        }
+    }
 }

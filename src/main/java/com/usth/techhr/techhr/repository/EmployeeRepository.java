@@ -13,6 +13,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, Emplo
     @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.deleted = 0", nativeQuery = true)
     List<Employee> findAllAvailableEmployees();
 
-    @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.phone = :phone AND e.deleted = 0", nativeQuery = true)
-    Optional<Employee> findEmployeeByPhone(@Param("phone") String phone);
+//    @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.phone = :phone AND e.deleted = 0", nativeQuery = true)
+//    Optional<Employee> findEmployeeByPhone(@Param("phone") String phone);
 }

@@ -2,14 +2,18 @@ package com.usth.techhr.techhr.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 
 public class EmployeeDTO {
     private Long id;
 
     private String name;
 
+    @Email(message = "Invalid email address format")
     private String email;
 
+    @Pattern(regexp = "[0-9]+", message = "Phone number must contain only digits")
     private String phone;
 
     @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
