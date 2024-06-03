@@ -18,14 +18,16 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    @Autowired
     private JwtTokenGenerator tokenGenerator;
+    @Autowired
     private CustomUserDetailService customUserDetailService;
 
-    @Autowired
-    public JwtAuthenticationFilter(JwtTokenGenerator tokenGenerator, CustomUserDetailService customUserDetailService) {
-        this.tokenGenerator = tokenGenerator;
-        this.customUserDetailService = customUserDetailService;
-    }
+//    @Autowired
+//    public JwtAuthenticationFilter(JwtTokenGenerator tokenGenerator, CustomUserDetailService customUserDetailService) {
+//        this.tokenGenerator = tokenGenerator;
+//        this.customUserDetailService = customUserDetailService;
+//    }
 
     public JwtAuthenticationFilter() {
     }

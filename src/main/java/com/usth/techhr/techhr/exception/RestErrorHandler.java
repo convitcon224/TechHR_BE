@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +38,13 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
                 ex.getFieldError().getDefaultMessage());
         return new ResponseEntity(errorDetails,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorDetails handleAuthenticationException(AuthenticationException ex){
+        return new ErrorDetails(LocalDateTime.now(), ex.getMessage());
     }
 
 }
